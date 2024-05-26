@@ -15,6 +15,7 @@ type Router struct {
 type iRoutes interface {
 	// RegisterHello()
 	RegisterUser()
+	RegisterMerchant()
 	// RegisterPatient()
 	// RegisterRecord()
 	// RegisterUpload()

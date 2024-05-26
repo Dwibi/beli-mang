@@ -2,6 +2,8 @@ package v1merchantscontroller
 
 import (
 	"database/sql"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 type V1Merchant struct {
@@ -9,10 +11,8 @@ type V1Merchant struct {
 }
 
 type IV1Merchant interface {
-	// AdminRegister(*fiber.Ctx) error
-	// AdminLogin(c *fiber.Ctx) error
-	// UserRegister(*fiber.Ctx) error
-	// UserLogin(c *fiber.Ctx) error
+	Create(c *fiber.Ctx) error
+	FindAll(c *fiber.Ctx) error
 }
 
 func New(v1Merchant *V1Merchant) IV1Merchant {

@@ -3,6 +3,7 @@ package http
 import (
 	"database/sql"
 
+	"github.com/Dwibi/beli-mang/src/http/middlewares"
 	"github.com/Dwibi/beli-mang/src/http/routers"
 	"github.com/gofiber/fiber/v2"
 )
@@ -26,7 +27,7 @@ func (h *Http) Launch() {
 	// Router
 	api := app.Group("/v1")
 
-	api.Get("/", func(c *fiber.Ctx) error {
+	api.Get("/", middlewares.AuthMiddleware, func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World!")
 	})
 
@@ -36,6 +37,7 @@ func (h *Http) Launch() {
 	})
 
 	router.RegisterUser()
+	router.RegisterMerchant()
 
 	app.Listen(":8080")
 }

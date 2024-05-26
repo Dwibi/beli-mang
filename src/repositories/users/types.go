@@ -14,6 +14,7 @@ type IUserRepository interface {
 	IsExist(*IsExistParams) (bool, error)
 	Create(*ParamsCreateUser) (int, error)
 	FindOne(*FindOneParams) (*entities.User, error)
+	FindUserRole(userId int) (string, error)
 }
 
 func New(db *sql.DB) IUserRepository {

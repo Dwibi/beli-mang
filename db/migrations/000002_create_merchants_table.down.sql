@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS merchants CASCADE;
+DROP TYPE IF EXISTS merchant_category CASCADE;
