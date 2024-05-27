@@ -16,5 +16,7 @@ CREATE TABLE IF NOT EXISTS items (
     name VARCHAR(30) NOT NULL,
     product_category product_category NOT NULL,
     image_url VARCHAR(255) NOT NULL,
-    price INTEGER NOT NULL 
+    price INTEGER NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    merchant_id INT NOT NULL REFERENCES merchants(id)
 );

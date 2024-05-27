@@ -14,8 +14,6 @@ func (r *Router) RegisterMerchant() {
 
 	r.Router.Post("/admin/merchants", middlewares.AuthMiddleware, v1merchantscontroller.Create)
 	r.Router.Get("/admin/merchants", middlewares.AuthMiddleware, v1merchantscontroller.FindAll)
-	// r.Router.Post("/admin/login", v1userscontroller.AdminLogin)
-	// r.Router.Post("/user/register", v1userscontroller.UserRegister)
-	// r.Router.Post("/user/login", v1userscontroller.UserLogin)
+	r.Router.Get("/merchants/nearby/:coordinates", middlewares.AuthMiddleware, v1merchantscontroller.FindNearby)
 
 }

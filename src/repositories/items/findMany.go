@@ -9,15 +9,16 @@ import (
 	"github.com/Dwibi/beli-mang/src/entities"
 )
 
-func (i sItemsRepository) FindMany(filters *entities.SearchItemsParams) (*entities.ItemsResult, error) {
-	query := "SELECT id, name, merchant_category, image_url, price, created_at FROM merchants WHERE 1=1"
+func (i sItemsRepository) FindMany(merchantId int, filters *entities.SearchItemsParams) (*entities.ItemsResult, error) {
+	query := "SELECT id, name, product_category, image_url, price, created_at FROM items WHERE 1=1"
 	params := []interface{}{}
+
+	// Declaring conditions slice outside the conditional block
+	conditions := []string{}
 
 	n := (&entities.SearchMerchantParams{})
 
 	if !reflect.DeepEqual(filters, n) {
-		conditions := []string{}
-
 		if filters.ItemId != "" {
 			conditions = append(conditions, "id = $"+strconv.Itoa(len(params)+1))
 			params = append(params, filters.ItemId)
@@ -33,23 +34,41 @@ func (i sItemsRepository) FindMany(filters *entities.SearchItemsParams) (*entiti
 			params = append(params, "%"+filters.Name+"%")
 		}
 
+		conditions = append(conditions, "merchant_id = $"+strconv.Itoa(len(params)+1))
+		params = append(params, merchantId)
+
 		if len(conditions) > 0 {
 			query += " AND "
 		}
 		query += strings.Join(conditions, " AND ")
 	}
 
+	// Count query to get the total number of items
+	countQuery := "SELECT COUNT(*) FROM items WHERE 1=1"
+	if len(conditions) > 0 {
+		countQuery += " AND " + strings.Join(conditions, " AND ")
+	}
+
+	// Execute the count query
+	var total int
+	err := i.DB.QueryRow(countQuery, params...).Scan(&total)
+	if err != nil {
+		log.Printf("Error counting items: %s", err)
+		return nil, err
+	}
+
+	// Append ORDER BY clause for the main query
 	if filters.CreatedAt != "" {
 		if filters.CreatedAt == "desc" {
 			query += " ORDER BY created_at DESC"
-		}
-		if filters.CreatedAt == "asc" {
+		} else if filters.CreatedAt == "asc" {
 			query += " ORDER BY created_at ASC"
 		}
 	} else {
 		query += " ORDER BY created_at DESC"
 	}
 
+	// Append LIMIT and OFFSET clauses for the main query
 	if filters.Limit == 0 {
 		filters.Limit = 5
 	}
@@ -63,9 +82,10 @@ func (i sItemsRepository) FindMany(filters *entities.SearchItemsParams) (*entiti
 		params = append(params, filters.Offset)
 	}
 
+	// Execute the main query
 	rows, err := i.DB.Query(query, params...)
 	if err != nil {
-		log.Printf("Error finding cat: %s", err)
+		log.Printf("Error finding items: %s", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -74,17 +94,15 @@ func (i sItemsRepository) FindMany(filters *entities.SearchItemsParams) (*entiti
 	meta := entities.MetaTypes{
 		Limit:  filters.Limit,
 		Offset: filters.Offset,
-		Total:  len(items),
+		Total:  total,
 	}
 
 	for rows.Next() {
 		c := new(entities.Items)
-		var MerchantIdStr string
-		err := rows.Scan(&MerchantIdStr, &c.Name, &c.ProductCategory, &c.ImageUrl, &c.Price, &c.CreatedAt)
+		err := rows.Scan(&c.Id, &c.Name, &c.ProductCategory, &c.ImageUrl, &c.Price, &c.CreatedAt)
 		if err != nil {
 			return nil, err
 		}
-		c.Id = func() int { n, _ := strconv.Atoi(MerchantIdStr); return n }()
 		items = append(items, c)
 	}
 	if err := rows.Err(); err != nil {

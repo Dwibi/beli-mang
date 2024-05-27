@@ -2,6 +2,8 @@ package v1itemscontroller
 
 import (
 	"database/sql"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 type V1Items struct {
@@ -9,8 +11,8 @@ type V1Items struct {
 }
 
 type IV1Items interface {
-	// Create(c *fiber.Ctx) error
-	// FindAll(c *fiber.Ctx) error
+	Create(c *fiber.Ctx) error
+	FindAll(c *fiber.Ctx) error
 }
 
 func New(v1Items *V1Items) IV1Items {

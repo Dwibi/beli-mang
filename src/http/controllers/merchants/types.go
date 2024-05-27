@@ -13,6 +13,7 @@ type V1Merchant struct {
 type IV1Merchant interface {
 	Create(c *fiber.Ctx) error
 	FindAll(c *fiber.Ctx) error
+	FindNearby(c *fiber.Ctx) error
 }
 
 func New(v1Merchant *V1Merchant) IV1Merchant {

@@ -9,8 +9,9 @@ import (
 )
 
 type CreateMerchantParams struct {
-	UserId int
-	Items  entities.CreateItemsParams
+	UserId     int
+	MerchantId int
+	Items      entities.CreateItemsParams
 }
 
 func (i sItemsUseCase) Create(m *CreateMerchantParams) (int, int, error) {
@@ -27,7 +28,7 @@ func (i sItemsUseCase) Create(m *CreateMerchantParams) (int, int, error) {
 
 	fmt.Println(m.Items)
 	// Create data di repository
-	merchantId, err := i.itemsRepository.Create(&m.Items)
+	merchantId, err := i.itemsRepository.Create(m.MerchantId, &m.Items)
 
 	if err != nil {
 		return 0, fiber.StatusInternalServerError, err

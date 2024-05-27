@@ -9,6 +9,7 @@ import (
 
 type FindManyParams struct {
 	UserId       int
+	MerchantId   int
 	SearchParams entities.SearchItemsParams
 }
 
@@ -25,7 +26,7 @@ func (i sItemsUseCase) FindManyParams(m *FindManyParams) (*entities.ItemsResult,
 	}
 
 	// Find data merchant by repository
-	merchants, err := i.itemsRepository.FindMany(&m.SearchParams)
+	merchants, err := i.itemsRepository.FindMany(m.UserId, &m.SearchParams)
 	if err != nil {
 		return nil, fiber.StatusInternalServerError, err
 	}

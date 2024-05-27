@@ -14,6 +14,7 @@ type sMerchantUseCase struct {
 type IMerchantUseCase interface {
 	Create(m *CreateMerchantParams) (int, int, error)
 	FindManyParams(m *FindManyParams) (*entities.MerchantResult, int, error)
+	FindNearby(m *FindNearbyParams) (*merchantrepository.ResultFindNearby, int, error)
 }
 
 func New(userRepository userrepository.IUserRepository, merchantRepository merchantrepository.IMerchantRepository) IMerchantUseCase {

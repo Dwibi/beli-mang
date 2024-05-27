@@ -38,6 +38,7 @@ func (h *Http) Launch() {
 
 	router.RegisterUser()
 	router.RegisterMerchant()
+	router.RegisterItems()
 
 	app.Listen(":8080")
 }

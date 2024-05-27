@@ -15,6 +15,8 @@ func (i V1Items) FindAll(c *fiber.Ctx) error {
 	// Accessing userId from auth middleware
 	userId := c.Locals("userId").(int)
 
+	merchantId, _ := strconv.Atoi(c.Params("merchantId"))
+
 	// get queries
 	q := c.Queries()
 	filters := new(entities.SearchItemsParams)
@@ -63,6 +65,7 @@ func (i V1Items) FindAll(c *fiber.Ctx) error {
 
 	result, status, err := uu.FindManyParams(&itemsusecase.FindManyParams{
 		UserId:       userId,
+		MerchantId:   merchantId,
 		SearchParams: *filters,
 	})
 

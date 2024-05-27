@@ -16,6 +16,9 @@ func (i V1Items) Create(c *fiber.Ctx) error {
 	// Accessing userId from auth middleware
 	userId := c.Locals("userId").(int)
 
+	// Get merchant id from params
+	merchantId, _ := strconv.Atoi(c.Params("merchantId"))
+
 	// Parse merchant body
 	items := new(entities.CreateItemsParams)
 	if err := c.BodyParser(items); err != nil {
@@ -46,8 +49,9 @@ func (i V1Items) Create(c *fiber.Ctx) error {
 	)
 
 	itemId, status, err := uu.Create(&itemsusecase.CreateMerchantParams{
-		UserId: userId,
-		Items:  *items,
+		UserId:     userId,
+		MerchantId: merchantId,
+		Items:      *items,
 	})
 
 	if err != nil {

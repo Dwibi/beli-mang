@@ -3,7 +3,7 @@ package entities
 import "time"
 
 type Merchants struct {
-	Id               int       `json:"merchantId"`
+	Id               string    `json:"merchantId"`
 	Name             string    `json:"name"`
 	ImageUrl         string    `json:"imageUrl"`
 	MerchantCategory string    `json:"merchantCategory"`
@@ -32,6 +32,14 @@ type SearchMerchantParams struct {
 	Name             string
 	MerchantCategory string
 	CreatedAt        string
+}
+
+type SearchNearbyMerchantParams struct {
+	MerchantId       string
+	Limit            int
+	Offset           int
+	Name             string
+	MerchantCategory string
 }
 type MetaType struct {
 	Limit  int `json:"limit"`
