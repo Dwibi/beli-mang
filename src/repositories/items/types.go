@@ -13,6 +13,7 @@ type sItemsRepository struct {
 type IItemsRepository interface {
 	FindMany(merchantId int, filters *entities.SearchItemsParams) (*entities.ItemsResult, error)
 	Create(merchantId int, m *entities.CreateItemsParams) (int, error)
+	GetMissingIDs(ids []int) ([]int, error)
 }
 
 func New(db *sql.DB) IItemsRepository {

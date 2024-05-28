@@ -50,3 +50,10 @@ type MerchantResult struct {
 	Data []*Merchants `json:"data"`
 	Meta MetaType     `json:"meta"`
 }
+
+type FindDistanceResult struct {
+	Id       int
+	Lat      float64
+	Long     float64
+	Distance float64
+}

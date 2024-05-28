@@ -30,6 +30,8 @@ func (i V1Items) Create(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
+	// TODO: Validate lat and long
+
 	if items.Price < 0 {
 		return fiber.NewError(fiber.StatusBadRequest, errors.New("price can't below 0").Error())
 	}

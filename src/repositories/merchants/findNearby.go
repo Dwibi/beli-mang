@@ -21,28 +21,29 @@ type ResultFindNearby struct {
 func (i sMerchantRepository) FindNearby(Latitude, Longitude float64, filters *entities.SearchNearbyMerchantParams) (*ResultFindNearby, error) {
 	query := `
 	SELECT 
-		m.id AS merchant_id,
-		m.name AS merchant_name,
-		m.merchant_category AS merchant_category,
-		m.image_url AS merchant_image_url,
-		m.location_lat AS merchant_location_lat,
-		m.location_long AS merchant_location_long,
-		m.created_at AS merchant_created_at,
-		i.id AS item_id,
-		i.name AS item_name,
-		i.product_category AS item_product_category,
-		i.image_url AS item_image_url,
-		i.price AS item_price,
-		i.created_at AS item_created_at,
-	(
-		6371 * acos(
-			cos(radians($1)) * cos(radians(m.location_lat)) * cos(radians(m.location_long) - radians($2)) + 
-			sin(radians($1)) * sin(radians(m.location_lat))
-		)
-	) AS distance
-	FROM merchants m
-	JOIN items i ON m.id = i.merchant_id
-	WHERE 1=1`
+    m.id AS merchant_id,
+    m.name AS merchant_name,
+    m.merchant_category AS merchant_category,
+    m.image_url AS merchant_image_url,
+    m.location_lat AS merchant_location_lat,
+    m.location_long AS merchant_location_long,
+    m.created_at AS merchant_created_at,
+    i.id AS item_id,
+    i.name AS item_name,
+    i.product_category AS item_product_category,
+    i.image_url AS item_image_url,
+    i.price AS item_price,
+    i.created_at AS item_created_at,
+    (
+        6371 * 2 * asin(sqrt(
+            power(sin(radians(m.location_lat - $1) / 2), 2) +
+            cos(radians($1)) * cos(radians(m.location_lat)) * 
+            power(sin(radians(m.location_long - $2) / 2), 2)
+        ))
+    ) AS distance
+FROM merchants m
+JOIN items i ON m.id = i.merchant_id
+WHERE 1=1`
 
 	params := []interface{}{Latitude, Longitude}
 	conditions := []string{}
@@ -59,7 +60,7 @@ func (i sMerchantRepository) FindNearby(Latitude, Longitude float64, filters *en
 		}
 
 		if filters.Name != "" {
-			conditions = append(conditions, "(LOWER(m.name) LIKE LOWER($"+strconv.Itoa(len(params)+1)+") OR LOWER(i.name) LIKE LOWER($"+strconv.Itoa(len(params)+2)+"))")
+			conditions = append(conditions, "(m.name ILIKE $"+strconv.Itoa(len(params)+1)+" OR i.name ILIKE $"+strconv.Itoa(len(params)+2)+")")
 			params = append(params, "%"+filters.Name+"%")
 			params = append(params, "%"+filters.Name+"%")
 		}
@@ -118,6 +119,9 @@ func (i sMerchantRepository) FindNearby(Latitude, Longitude float64, filters *en
 			return nil, err
 		}
 
+		// fmt.Println()
+		// fmt.Println(RoundToDecimals(distance, 2))
+
 		if _, exists := merchantItemsMap[merchantID]; !exists {
 			merchantItemsMap[merchantID] = &MerchantItem{
 				Merchant: entities.Merchants{
@@ -135,14 +139,17 @@ func (i sMerchantRepository) FindNearby(Latitude, Longitude float64, filters *en
 			}
 		}
 
-		merchantItemsMap[merchantID].Items = append(merchantItemsMap[merchantID].Items, entities.Items{
-			Id:              strconv.Itoa(itemID),
-			Name:            itemName,
-			ProductCategory: itemProductCategory,
-			ImageUrl:        itemImageUrl,
-			Price:           itemPrice,
-			CreatedAt:       itemCreatedAt,
-		})
+		if isValid := strings.Contains(strings.ToLower(itemName), strings.ToLower(filters.Name)); isValid {
+			merchantItemsMap[merchantID].Items = append(merchantItemsMap[merchantID].Items, entities.Items{
+				Id:              strconv.Itoa(itemID),
+				Name:            itemName,
+				ProductCategory: itemProductCategory,
+				ImageUrl:        itemImageUrl,
+				Price:           itemPrice,
+				CreatedAt:       itemCreatedAt,
+			})
+		}
+
 	}
 
 	for _, merchantItem := range merchantItemsMap {

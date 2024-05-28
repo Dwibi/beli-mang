@@ -61,3 +61,27 @@ func ValidateURLWithDomain(u string) error {
 
 	return nil
 }
+
+func ValidateLatAndLong(lat, long float64) bool {
+	return lat >= -90 && lat <= 90 && long >= -180 && long <= 180
+}
+
+func ValidateStartingPoint(orders []entities.Orders) error {
+	startingPoint := false
+
+	for _, o := range orders {
+		if startingPoint && o.IsStartingPoint {
+			return errors.New("there's should be one isStartingPoint = true in orders")
+		}
+
+		if !startingPoint && o.IsStartingPoint {
+			startingPoint = true
+		}
+	}
+
+	if !startingPoint {
+		return errors.New("there's should be one isStartingPoint = true in orders")
+	}
+
+	return nil
+}
