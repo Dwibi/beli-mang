@@ -21,12 +21,10 @@ func (i sEstimatesUseCase) Create(p CreateEstimateParams) (*entities.ResultEstim
 	userRole, err := i.userRepository.FindUserRole(p.UserId)
 
 	if err != nil {
-		fmt.Println("error 1")
 		return nil, fiber.StatusInternalServerError, err
 	}
 
 	if userRole != "user" {
-		fmt.Println("error 2")
 		return nil, fiber.StatusUnauthorized, errors.New("only user can use this route")
 	}
 
@@ -52,12 +50,10 @@ func (i sEstimatesUseCase) Create(p CreateEstimateParams) (*entities.ResultEstim
 	missingMerchantId, err := i.merchantrepository.GetMissingIDs(merchantIds)
 
 	if err != nil {
-		fmt.Println("error 3")
 		return nil, fiber.StatusInternalServerError, err
 	}
 
 	if len(missingMerchantId) > 0 {
-		fmt.Println("error 4")
 		return nil, fiber.StatusNotFound, fmt.Errorf("the following IDs do not exist in the merchants table: %v", missingMerchantId)
 	}
 
@@ -65,12 +61,10 @@ func (i sEstimatesUseCase) Create(p CreateEstimateParams) (*entities.ResultEstim
 	missingItemId, err := i.itemsrepository.GetMissingIDs(itemIds)
 
 	if err != nil {
-		fmt.Println("error 5")
 		return nil, fiber.StatusInternalServerError, err
 	}
 
 	if len(missingItemId) > 0 {
-		fmt.Println("error 6")
 		return nil, fiber.StatusNotFound, fmt.Errorf("the following IDs do not exist in the items table: %v", missingItemId)
 	}
 
@@ -81,7 +75,6 @@ func (i sEstimatesUseCase) Create(p CreateEstimateParams) (*entities.ResultEstim
 	})
 
 	if err != nil {
-		fmt.Println("error 7")
 		return nil, fiber.StatusInternalServerError, err
 	}
 
@@ -98,10 +91,7 @@ func (i sEstimatesUseCase) Create(p CreateEstimateParams) (*entities.ResultEstim
 
 		merchant = *tempMerchant
 
-		fmt.Println("exec 2")
-
 		if err != nil {
-			fmt.Println("error 9")
 			return nil, fiber.StatusInternalServerError, err
 		}
 
@@ -132,7 +122,6 @@ func (i sEstimatesUseCase) Create(p CreateEstimateParams) (*entities.ResultEstim
 
 	// Validate that total tsp is > 3 km
 	if totalDistance > 3 {
-		fmt.Println("error 10")
 		return nil, fiber.StatusBadRequest, errors.New("the coordinates is too far > 3km")
 	}
 
@@ -146,27 +135,23 @@ func (i sEstimatesUseCase) Create(p CreateEstimateParams) (*entities.ResultEstim
 	estimateId, err := i.estimatesRepository.Create(p.UserId, int(math.Ceil(estimatedTimeInMinutes)))
 
 	if err != nil {
-		fmt.Println("error 11")
 		return nil, fiber.StatusInternalServerError, err
 	}
 
 	err = i.estimateitemsrepository.Create(estimateId, p.EstimatesBody.Orders)
 
 	if err != nil {
-		fmt.Println("error 12")
 		return nil, fiber.StatusInternalServerError, err
 	}
 
 	// Calculate Total Price
 	totalPrice, err := i.estimateitemsrepository.FindTotalPrice(estimateId)
 	if err != nil {
-		fmt.Println("error 13")
 		return nil, fiber.StatusInternalServerError, err
 	}
 
 	result, err := i.estimatesRepository.Update(totalPrice)
 	if err != nil {
-		fmt.Println("error 14")
 		return nil, fiber.StatusInternalServerError, err
 	}
 

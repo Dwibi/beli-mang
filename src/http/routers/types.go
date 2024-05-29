@@ -18,6 +18,7 @@ type iRoutes interface {
 	RegisterMerchant()
 	RegisterItems()
 	RegisterEstimates()
+	RegisterOrders()
 	// RegisterPatient()
 	// RegisterRecord()
 	// RegisterUpload()

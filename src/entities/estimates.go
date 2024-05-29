@@ -11,14 +11,14 @@ type ItemsEstimate struct {
 }
 
 type Orders struct {
-	MerchantId      string          `json:"merchantId"`
+	MerchantId      string          `json:"merchantId" validate:"required,string"`
 	IsStartingPoint bool            `json:"isStartingPoint" validate:"required,boolean"`
 	Items           []ItemsEstimate `json:"items"`
 }
 
 type CreateEstimateParams struct {
-	UserLocation UserLocation `json:"userLocation"`
-	Orders       []Orders     `json:"orders"`
+	UserLocation UserLocation `json:"userLocation" validate:"required"`
+	Orders       []Orders     `json:"orders" validate:"required"`
 }
 
 type ResultEstimate struct {

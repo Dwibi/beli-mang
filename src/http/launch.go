@@ -40,6 +40,7 @@ func (h *Http) Launch() {
 	router.RegisterMerchant()
 	router.RegisterItems()
 	router.RegisterEstimates()
+	router.RegisterOrders()
 
 	app.Listen(":8080")
 }
