@@ -1,10 +1,15 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"log"
 
 	"github.com/Dwibi/beli-mang/src/drivers/db"
 	"github.com/Dwibi/beli-mang/src/http"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/joho/godotenv"
 )
 
@@ -25,23 +30,18 @@ func main() {
 	}()
 
 	// Load the Shared AWS Configuration (~/.aws/config)
-	// cfg, err := config.LoadDefaultConfig(context.TODO())
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+	cfg, err := config.LoadDefaultConfig(context.TODO())
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// Create an Amazon S3 service client
-	// client := s3.NewFromConfig(cfg)
-	// uploader := manager.NewUploader(client)
-
-	// h := http.New(&http.Http{
-	// 	DB:       dbConnection,
-	// 	Uploader: uploader,
-	// })
+	client := s3.NewFromConfig(cfg)
+	uploader := manager.NewUploader(client)
 
 	h := http.New(&http.Http{
-		DB: db,
-		// Uploader: uploader,
+		DB:       db,
+		Uploader: uploader,
 	})
 
 	h.Launch()

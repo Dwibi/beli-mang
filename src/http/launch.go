@@ -5,12 +5,13 @@ import (
 
 	"github.com/Dwibi/beli-mang/src/http/middlewares"
 	"github.com/Dwibi/beli-mang/src/http/routers"
+	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/gofiber/fiber/v2"
 )
 
 type Http struct {
-	DB *sql.DB
-	// Uploader *manager.Uploader
+	DB       *sql.DB
+	Uploader *manager.Uploader
 }
 
 type iHttp interface {
@@ -32,8 +33,9 @@ func (h *Http) Launch() {
 	})
 
 	router := routers.New(&routers.Router{
-		Router: api,
-		DB:     h.DB,
+		Router:   api,
+		DB:       h.DB,
+		Uploader: h.Uploader,
 	})
 
 	router.RegisterUser()
@@ -41,6 +43,7 @@ func (h *Http) Launch() {
 	router.RegisterItems()
 	router.RegisterEstimates()
 	router.RegisterOrders()
+	router.RegisterUpload()
 
 	app.Listen(":8080")
 }

@@ -14,7 +14,6 @@ func (i sUserUseCase) AdminRegister(p entities.RegisterParams) (string, int, err
 	// Validasi username udah di pake atau belum
 	isUsernameExist, err := i.userRepository.IsExist(&userrepository.IsExistParams{
 		Username: p.Username,
-		Role:     "admin",
 	})
 
 	if err != nil {

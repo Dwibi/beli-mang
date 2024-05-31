@@ -16,6 +16,7 @@ type IMerchantRepository interface {
 	GetMissingIDs(ids []int) ([]int, error)
 	FindNearby(Latitude, Longitude float64, filters *entities.SearchNearbyMerchantParams) (*ResultFindNearby, error)
 	FindDistance(latitude, longitude float64, ids []int) (*entities.FindDistanceResult, error)
+	FindOne(id int) (*entities.Merchants, error)
 }
 
 func New(db *sql.DB) IMerchantRepository {

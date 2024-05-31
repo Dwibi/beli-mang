@@ -69,36 +69,49 @@ func (i sEstimatesUseCase) Create(p CreateEstimateParams) (*entities.ResultEstim
 	}
 
 	// Get first startingPointMerchant lat and long
-	merchant, err := i.merchantrepository.FindMany(&entities.SearchMerchantParams{
-		MerchantId: startingPointMerchant,
-		Limit:      1,
-	})
+	startingPointMerchantInt, _ := strconv.Atoi(startingPointMerchant)
+	startingMerchant, err := i.merchantrepository.FindOne(startingPointMerchantInt)
+
+	// merchant, err := i.merchantrepository.FindMany(&entities.SearchMerchantParams{
+	// 	MerchantId: startingPointMerchant,
+	// 	Limit:      1,
+	// })
 
 	if err != nil {
 		return nil, fiber.StatusInternalServerError, err
 	}
 
-	startingPointLat := merchant.Data[0].Location.Lat
-	startingPointLong := merchant.Data[0].Location.Long
+	startingPointLat := startingMerchant.Location.Lat
+	startingPointLong := startingMerchant.Location.Long
 
 	// Get total distance tsp
 	totalDistance := 0.0
 
 	for len(merchantIds) != 0 {
-		var merchant entities.FindDistanceResult
+		// var merchant entities.FindDistanceResult
 
-		tempMerchant, err := i.merchantrepository.FindDistance(startingPointLat, startingPointLong, merchantIds)
+		// tempMerchant, err := i.merchantrepository.FindDistance(startingPointLat, startingPointLong, merchantIds)
 
-		merchant = *tempMerchant
+		// merchant = *tempMerchant
+
+		merchant, err := i.merchantrepository.FindOne(startingPointMerchantInt)
 
 		if err != nil {
 			return nil, fiber.StatusInternalServerError, err
 		}
 
-		startingPointLat = merchant.Lat
-		startingPointLong = merchant.Long
-		totalDistance += merchant.Distance
-		valueToDelete := merchant.Id
+		// Validate that total tsp is > 3 km
+		if distance := helpers.Haversine(startingPointLat, startingPointLong, merchant.Location.Lat, merchant.Location.Long); distance > 3 {
+			return nil, fiber.StatusBadRequest, errors.New("the coordinates is too far > 3km")
+		}
+
+		totalDistance += helpers.Haversine(startingPointLat, startingPointLong, merchant.Location.Lat, merchant.Location.Long)
+		startingPointLat = merchant.Location.Lat
+		startingPointLong = merchant.Location.Long
+		// startingPointLat = merchant.Lat
+		// startingPointLong = merchant.Long
+		// totalDistance += merchant.Distance
+		valueToDelete, _ := strconv.Atoi(merchant.Id)
 
 		// Deleted used merchant in merchantIds
 		indexToDelete := -1
@@ -121,9 +134,9 @@ func (i sEstimatesUseCase) Create(p CreateEstimateParams) (*entities.ResultEstim
 	fmt.Println("distance : ", totalDistance)
 
 	// Validate that total tsp is > 3 km
-	if totalDistance > 3 {
-		return nil, fiber.StatusBadRequest, errors.New("the coordinates is too far > 3km")
-	}
+	// if totalDistance > 3 {
+	// 	return nil, fiber.StatusBadRequest, errors.New("the coordinates is too far > 3km")
+	// }
 
 	// Calculate estimate time delivery
 	estimatedTimeInHours := totalDistance / float64(40) // 40km/h
