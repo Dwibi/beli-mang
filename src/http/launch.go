@@ -3,7 +3,6 @@ package http
 import (
 	"database/sql"
 
-	"github.com/Dwibi/beli-mang/src/http/middlewares"
 	"github.com/Dwibi/beli-mang/src/http/routers"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/gofiber/fiber/v2"
@@ -25,7 +24,7 @@ func New(Http *Http) iHttp {
 func (h *Http) Launch() {
 	app := fiber.New()
 
-	app.Get("/", middlewares.AuthMiddleware, func(c *fiber.Ctx) error {
+	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World!")
 	})
 
