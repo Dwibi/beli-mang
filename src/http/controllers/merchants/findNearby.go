@@ -56,7 +56,7 @@ func (i V1Merchant) FindNearby(c *fiber.Ctx) error {
 		if err != nil {
 			return fiber.NewError(fiber.StatusBadRequest, "offset must be number")
 		}
-		filters.Limit = offset
+		filters.Offset = offset
 	}
 
 	if q["name"] != "" {

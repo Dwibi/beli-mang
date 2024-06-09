@@ -25,15 +25,12 @@ func New(Http *Http) iHttp {
 func (h *Http) Launch() {
 	app := fiber.New()
 
-	// Router
-	api := app.Group("/v1")
-
-	api.Get("/", middlewares.AuthMiddleware, func(c *fiber.Ctx) error {
+	app.Get("/", middlewares.AuthMiddleware, func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World!")
 	})
 
 	router := routers.New(&routers.Router{
-		Router:   api,
+		Router:   app,
 		DB:       h.DB,
 		Uploader: h.Uploader,
 	})

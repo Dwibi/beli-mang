@@ -18,6 +18,9 @@ func (i sMerchantRepository) FindMany(filters *entities.SearchMerchantParams) (*
 
 	n := (&entities.SearchMerchantParams{})
 
+	// fmt.Println("limit repository", filters.Limit)
+	// fmt.Println("offset repository", filters.Offset)
+
 	if !reflect.DeepEqual(filters, n) {
 		if filters.MerchantId != "" {
 			conditions = append(conditions, "id = $"+strconv.Itoa(len(params)+1))

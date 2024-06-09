@@ -24,6 +24,9 @@ func (i sMerchantUseCase) FindManyParams(m *FindManyParams) (*entities.MerchantR
 		return nil, fiber.StatusUnauthorized, errors.New("only admin can this route")
 	}
 
+	// fmt.Println("limit usecases", m.SearchParams.Limit)
+	// fmt.Println("offset usecases", m.SearchParams.Offset)
+
 	// Find data merchant by repository
 	merchants, err := i.merchantRepository.FindMany(&m.SearchParams)
 	if err != nil {

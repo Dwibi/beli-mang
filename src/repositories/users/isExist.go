@@ -41,7 +41,7 @@ func (i sUserRepository) IsExist(p *IsExistParams) (bool, error) {
 
 	query := fmt.Sprintf("SELECT EXISTS (%v);", tempQuery)
 
-	log.Println("query : " + query)
+	// log.Println("query : " + query)
 
 	var exists bool
 	err := i.DB.QueryRow(query, params...).Scan(&exists)

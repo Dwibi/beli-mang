@@ -15,17 +15,17 @@ type OrderItems struct {
 	Name            string    `json:"name"`
 	ImageUrl        string    `json:"imageUrl"`
 	ProductCategory string    `json:"productCategory"`
-	Price           int       `json:"Price"`
+	Price           int       `json:"price"`
 	Quantity        int       `json:"quantity"`
 	CreatedAt       time.Time `json:"createdAt"`
 }
 
 type Order struct {
-	OrderId  int
-	Merchant Merchants
-	Items    []OrderItems
+	Merchant Merchants    `json:"merchant"`
+	Items    []OrderItems `json:"items"`
 }
 
 type ResultListOrderItems struct {
-	Data []Order
+	OrderId string  `json:"orderId"`
+	Orders  []Order `json:"orders"`
 }

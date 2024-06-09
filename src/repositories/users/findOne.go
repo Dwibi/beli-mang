@@ -35,7 +35,7 @@ func (i sUserRepository) FindOne(p *FindOneParams) (*entities.User, error) {
 
 	query += strings.Join(conditions, " AND ")
 
-	log.Println("query : " + query)
+	// log.Println("query : " + query)
 
 	var user entities.User
 	err := i.DB.QueryRow(query, params...).Scan(&user.Id, &user.Password)

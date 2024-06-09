@@ -19,24 +19,27 @@ func (i V1Merchant) FindAll(c *fiber.Ctx) error {
 	q := c.Queries()
 	filters := new(entities.SearchMerchantParams)
 
+	// fmt.Println("limit controller", q["limit"])
+	// fmt.Println("offset controller", q["offset"])
+
 	if q["merchantId"] != "" {
 		filters.MerchantId = q["merchantId"]
 	}
 
 	if q["limit"] != "" {
-		limit, err := strconv.Atoi(q["limit"])
+		limitInt, err := strconv.Atoi(q["limit"])
 		if err != nil {
 			return fiber.NewError(fiber.StatusBadRequest, "limit must be number")
 		}
-		filters.Limit = limit
+		filters.Limit = limitInt
 	}
 
 	if q["offset"] != "" {
-		offset, err := strconv.Atoi(q["offset"])
+		offsetInt, err := strconv.Atoi(q["offset"])
 		if err != nil {
 			return fiber.NewError(fiber.StatusBadRequest, "offset must be number")
 		}
-		filters.Limit = offset
+		filters.Offset = offsetInt
 	}
 
 	if q["name"] != "" {

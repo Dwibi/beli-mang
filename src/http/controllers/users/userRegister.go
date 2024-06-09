@@ -10,6 +10,7 @@ import (
 
 func (i V1Users) UserRegister(c *fiber.Ctx) error {
 	user := new(entities.RegisterParams)
+
 	if err := c.BodyParser(user); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}

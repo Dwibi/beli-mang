@@ -1,8 +1,6 @@
 package v1uploadcontroller
 
 import (
-	"fmt"
-
 	userrepository "github.com/Dwibi/beli-mang/src/repositories/users"
 	uploadsusecase "github.com/Dwibi/beli-mang/src/usecases/upload"
 	"github.com/gofiber/fiber/v2"
@@ -21,7 +19,7 @@ func (i V1Upload) Image(c *fiber.Ctx) error {
 	// Accessing userId from auth middleware
 	userId := c.Locals("userId").(int)
 
-	fmt.Println(userId)
+	// fmt.Println(userId)
 
 	file, err := c.FormFile("file")
 	if err != nil {

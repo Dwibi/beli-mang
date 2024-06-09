@@ -7,7 +7,7 @@ type Items struct {
 	Name            string    `json:"name"`
 	ImageUrl        string    `json:"imageUrl"`
 	ProductCategory string    `json:"productCategory"`
-	Price           int       `json:"Price"`
+	Price           int       `json:"price"`
 	CreatedAt       time.Time `json:"createdAt"`
 }
 

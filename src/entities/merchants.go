@@ -1,6 +1,8 @@
 package entities
 
-import "time"
+import (
+	"time"
+)
 
 type Merchants struct {
 	Id               string    `json:"merchantId"`
@@ -56,4 +58,19 @@ type FindDistanceResult struct {
 	Lat      float64
 	Long     float64
 	Distance float64
+}
+
+type GetNearbyMerchantQueries struct {
+	MerchantId       string  `db:"id" json:"merchantId" query:"merchantId"`
+	Limit            int     `json:"limit" query:"limit"`
+	Offset           int     `json:"offset" query:"offset"`
+	Name             string  `db:"name" json:"name" query:"name"`
+	MerchantCategory string  `db:"merchant_category" json:"merchantCategory" query:"merchantCategory"`
+	Latitude         float64 `db:"latitude" json:"lat"`
+	Longitude        float64 `db:"longitude" json:"long"`
+}
+
+type GetNearbyMerchantResponse struct {
+	Merchant Merchants `json:"merchant"`
+	Items    []Items   `json:"items"`
 }

@@ -42,5 +42,5 @@ func (i sUserUseCase) AdminLogin(p entities.LoginParams) (string, int, error) {
 		return "", fiber.StatusInternalServerError, err
 	}
 
-	return token, fiber.StatusCreated, nil
+	return token, fiber.StatusOK, nil
 }

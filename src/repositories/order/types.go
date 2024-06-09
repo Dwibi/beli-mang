@@ -12,7 +12,7 @@ type sOrderRepository struct {
 
 type IOrderRepository interface {
 	Create(reqUserId int, CalculatedEstimateId string) (int, error)
-	FindMany(userId int, filters *entities.SearchOrderParams) (*entities.ResultListOrderItems, error)
+	FindMany(userId int, filters *entities.SearchOrderParams) (*[]entities.ResultListOrderItems, error)
 }
 
 func New(db *sql.DB) IOrderRepository {

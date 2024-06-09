@@ -9,23 +9,23 @@ import (
 	"github.com/Dwibi/beli-mang/src/entities"
 )
 
-func (i sOrderRepository) FindMany(userId int, filters *entities.SearchOrderParams) (*entities.ResultListOrderItems, error) {
+func (i sOrderRepository) FindMany(userId int, filters *entities.SearchOrderParams) (*[]entities.ResultListOrderItems, error) {
 	query := `SELECT
-	oi.order_id AS order_id,
-	m.id AS merchant_id,
-    m.name AS merchant_name,
-    m.merchant_category AS merchant_category,
-    m.image_url AS merchant_image_url,
-    m.location_lat AS merchant_location_lat,
-    m.location_long AS merchant_location_long,
-    m.created_at AS merchant_created_at,
-    i.id AS item_id,
-    i.name AS item_name,
-    i.product_category AS item_product_category,
-    i.price AS item_price,
-	oi.quantity AS quantity,
-    i.image_url AS item_image_url,
-    i.created_at AS item_created_at
+		o.order_id AS order_id,
+		m.id AS merchant_id,
+		m.name AS merchant_name,
+		m.merchant_category AS merchant_category,
+		m.image_url AS merchant_image_url,
+		m.location_lat AS merchant_location_lat,
+		m.location_long AS merchant_location_long,
+		m.created_at AS merchant_created_at,
+		i.id AS item_id,
+		i.name AS item_name,
+		i.product_category AS item_product_category,
+		i.price AS item_price,
+		oi.quantity AS quantity,
+		i.image_url AS item_image_url,
+		i.created_at AS item_created_at
 	FROM orders o
 	JOIN order_items oi ON o.order_id = oi.order_id 
 	JOIN merchants m ON oi.merchant_id = m.id 
@@ -75,85 +75,88 @@ func (i sOrderRepository) FindMany(userId int, filters *entities.SearchOrderPara
 	}
 	defer rows.Close()
 
-	var result entities.ResultListOrderItems
-	merchantOrderItemsMap := make(map[int]*entities.Order)
-
+	orderMap := make(map[string]entities.ResultListOrderItems)
 	for rows.Next() {
 		var (
-			orderID              int
-			merchantID           int
+			orderId              string
+			merchantId           string
 			merchantName         string
-			merchantCategory     string
 			merchantImageUrl     string
+			merchantCategory     string
 			merchantLocationLat  float64
 			merchantLocationLong float64
 			merchantCreatedAt    time.Time
-			itemID               int
+			itemId               string
 			itemName             string
-			itemProductCategory  string
-			itemImageUrl         string
+			productCategory      string
 			itemPrice            int
-			itemQuantity         int
+			itemImageUrl         string
+			quantity             int
 			itemCreatedAt        time.Time
 		)
 
-		err := rows.Scan(&orderID, &merchantID, &merchantName, &merchantCategory, &merchantImageUrl, &merchantLocationLat,
-			&merchantLocationLong, &merchantCreatedAt, &itemID, &itemName, &itemProductCategory,
-			&itemPrice, &itemQuantity, &itemImageUrl, &itemCreatedAt)
-
+		err := rows.Scan(
+			&orderId,
+			&merchantId,
+			&merchantName,
+			&merchantCategory,
+			&merchantImageUrl,
+			&merchantLocationLat,
+			&merchantLocationLong,
+			&merchantCreatedAt,
+			&itemId,
+			&itemName,
+			&productCategory,
+			&itemPrice,
+			&quantity,
+			&itemImageUrl,
+			&itemCreatedAt,
+		)
 		if err != nil {
 			return nil, err
 		}
 
-		if _, exists := merchantOrderItemsMap[merchantID]; !exists {
-			merchantOrderItemsMap[merchantID] = &entities.Order{
-				OrderId: orderID,
-				Merchant: entities.Merchants{
-					Id:               strconv.Itoa(merchantID),
-					Name:             merchantName,
-					MerchantCategory: merchantCategory,
-					ImageUrl:         merchantImageUrl,
-					Location: entities.Location{
-						Lat:  merchantLocationLat,
-						Long: merchantLocationLong,
-					},
-					CreatedAt: merchantCreatedAt,
+		item := entities.OrderItems{
+			Id:              itemId,
+			Name:            itemName,
+			Price:           itemPrice,
+			Quantity:        quantity,
+			ImageUrl:        itemImageUrl,
+			ProductCategory: productCategory,
+			CreatedAt:       itemCreatedAt,
+		}
+
+		if order, exists := orderMap[orderId]; exists {
+			order.Orders[0].Items = append(order.Orders[0].Items, item)
+			orderMap[orderId] = order
+		} else {
+			merchant := entities.Merchants{
+				Id:               merchantId,
+				Name:             merchantName,
+				ImageUrl:         merchantImageUrl,
+				MerchantCategory: merchantCategory,
+				CreatedAt:        merchantCreatedAt,
+				Location: entities.Location{
+					Lat:  merchantLocationLat,
+					Long: merchantLocationLong,
 				},
-				Items: []entities.OrderItems{},
+			}
+			orderMap[orderId] = entities.ResultListOrderItems{
+				OrderId: orderId,
+				Orders: []entities.Order{
+					{
+						Merchant: merchant,
+						Items:    []entities.OrderItems{item},
+					},
+				},
 			}
 		}
-
-		if filters != nil && strings.Contains(strings.ToLower(itemName), strings.ToLower(filters.Name)) {
-			merchantOrderItemsMap[merchantID].Items = append(merchantOrderItemsMap[merchantID].Items, entities.OrderItems{
-				Id:              strconv.Itoa(itemID),
-				Name:            itemName,
-				ProductCategory: itemProductCategory,
-				ImageUrl:        itemImageUrl,
-				Price:           itemPrice,
-				Quantity:        itemQuantity,
-				CreatedAt:       itemCreatedAt,
-			})
-		} else if filters == nil {
-			merchantOrderItemsMap[merchantID].Items = append(merchantOrderItemsMap[merchantID].Items, entities.OrderItems{
-				Id:              strconv.Itoa(itemID),
-				Name:            itemName,
-				ProductCategory: itemProductCategory,
-				ImageUrl:        itemImageUrl,
-				Price:           itemPrice,
-				Quantity:        itemQuantity,
-				CreatedAt:       itemCreatedAt,
-			})
-		}
-
 	}
 
-	for _, merchantOrderItem := range merchantOrderItemsMap {
-		result.Data = append(result.Data, *merchantOrderItem)
+	var orders []entities.ResultListOrderItems
+	for _, order := range orderMap {
+		orders = append(orders, order)
 	}
 
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return &result, nil
+	return &orders, nil
 }

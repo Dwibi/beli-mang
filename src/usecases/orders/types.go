@@ -19,7 +19,7 @@ type IOrdersUseCase interface {
 	// FindManyParams(m *FindManyParams) (*entities.ItemsResult, int, error)
 	// FindManyParams(m *FindManyParams) (*entities.MerchantResult, int, error)
 	Create(o CreateOrderParams) (string, int, error)
-	FindMany(m *FindManyParams) (*entities.ResultListOrderItems, int, error)
+	FindMany(m *FindManyParams) (*[]entities.ResultListOrderItems, int, error)
 }
 
 func New(userRepository userrepository.IUserRepository,

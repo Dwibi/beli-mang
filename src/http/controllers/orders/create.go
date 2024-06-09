@@ -1,8 +1,6 @@
 package v1ordercontroller
 
 import (
-	"fmt"
-
 	"github.com/Dwibi/beli-mang/src/helpers"
 	orderrepository "github.com/Dwibi/beli-mang/src/repositories/order"
 	orderitemrepository "github.com/Dwibi/beli-mang/src/repositories/order_items"
@@ -20,7 +18,7 @@ func (i V1Orders) Create(c *fiber.Ctx) error {
 	// Body parse
 	var orderBody CreateOrderParams
 	if err := c.BodyParser(&orderBody); err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 

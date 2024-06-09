@@ -20,3 +20,7 @@ CREATE TABLE IF NOT EXISTS items (
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     merchant_id INT NOT NULL REFERENCES merchants(id)
 );
+
+CREATE INDEX IF NOT EXISTS idx_items_name ON items(name);
+CREATE INDEX IF NOT EXISTS idx_items_product_category ON items(product_category);
+CREATE INDEX IF NOT EXISTS idx_items_merchant_id ON items(merchant_id);

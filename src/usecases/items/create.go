@@ -2,7 +2,6 @@ package itemsusecase
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/Dwibi/beli-mang/src/entities"
 	"github.com/gofiber/fiber/v2"
@@ -26,7 +25,7 @@ func (i sItemsUseCase) Create(m *CreateMerchantParams) (int, int, error) {
 		return 0, fiber.StatusUnauthorized, errors.New("only admin can this route")
 	}
 
-	fmt.Println(m.Items)
+	// fmt.Println(m.Items)
 	// Create data di repository
 	merchantId, err := i.itemsRepository.Create(m.MerchantId, &m.Items)
 

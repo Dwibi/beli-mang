@@ -21,3 +21,7 @@ CREATE TABLE IF NOT EXISTS merchants (
     location_long FLOAT8 NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE INDEX IF NOT EXISTS idx_merchants_location_lat_long ON merchants(location_lat, location_long);
+CREATE INDEX IF NOT EXISTS idx_merchants_name ON merchants(name);
+CREATE INDEX IF NOT EXISTS idx_merchants_merchant_category ON merchants(merchant_category);

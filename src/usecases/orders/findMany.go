@@ -12,7 +12,7 @@ type FindManyParams struct {
 	SearchParams entities.SearchOrderParams
 }
 
-func (i sOrdersUseCase) FindMany(m *FindManyParams) (*entities.ResultListOrderItems, int, error) {
+func (i sOrdersUseCase) FindMany(m *FindManyParams) (*[]entities.ResultListOrderItems, int, error) {
 	// Validate user who make a request is admin or not
 	userRole, err := i.userRepository.FindUserRole(m.UserId)
 

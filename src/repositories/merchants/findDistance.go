@@ -2,7 +2,6 @@ package merchantrepository
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -36,7 +35,7 @@ func (i sMerchantRepository) FindDistance(latitude, longitude float64, ids []int
 	query += strings.Join(conditions, ", ")
 	query += ") ORDER BY distance LIMIT 1;"
 
-	fmt.Println("query : ", query)
+	// fmt.Println("query : ", query)
 
 	var result entities.FindDistanceResult
 	err := i.DB.QueryRow(query, params...).Scan(&result.Id, &result.Lat, &result.Long, &result.Distance)

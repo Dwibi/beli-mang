@@ -7,3 +7,7 @@ CREATE TABLE IF NOT EXISTS estimate_items (
     is_starting_point BOOLEAN NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE INDEX IF NOT EXISTS idx_estimate_items_calculated_estimate_id ON estimate_items(calculated_estimate_id);
+CREATE INDEX IF NOT EXISTS idx_estimate_items_merchant_id ON estimate_items(merchant_id);
+CREATE INDEX IF NOT EXISTS idx_estimate_items_item_id ON estimate_items(item_id);

@@ -13,7 +13,7 @@ type sEstimatesRepository struct {
 type IEstimatesRepository interface {
 	// FindMany(merchantId int, filters *entities.SearchItemsParams) (*entities.ItemsResult, error)
 	// Create(merchantId int, m *entities.CreateItemsParams) (int, error)
-	Create(userId int, estimatedDeliveryTime int) (int, error)
+	Create(userId int, totalPrice, estimatedDeliveryTime float64) (*entities.ResultEstimate, error)
 	Update(totalPrice float64) (*entities.ResultEstimate, error)
 }
 

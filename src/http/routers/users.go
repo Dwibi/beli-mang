@@ -10,7 +10,7 @@ func (r *Router) RegisterUser() {
 
 	r.Router.Post("/admin/register", v1userscontroller.AdminRegister)
 	r.Router.Post("/admin/login", v1userscontroller.AdminLogin)
-	r.Router.Post("/user/register", v1userscontroller.UserRegister)
-	r.Router.Post("/user/login", v1userscontroller.UserLogin)
+	r.Router.Post("/users/register", v1userscontroller.UserRegister)
+	r.Router.Post("/users/login", v1userscontroller.UserLogin)
 
 }
